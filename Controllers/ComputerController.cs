@@ -29,19 +29,58 @@ public class ComputerController : Controller
         return View(computer);
     }
 
-    public IActionResult Cadastrar()
+    public IActionResult Cadastro()
     {
         return View();
     }
 
-    public IActionResult Update()
+    public IActionResult Cadastrando([FromForm] int id, [FromForm] string ram, [FromForm] string processor)
     {
-        return View();
+        if(_context.Computers.Find(id) != null)
+        {
+            return View(id);
+        }
+        else
+        {
+             _context.Computers.Add(new Computer(id, ram, processor));
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
     }
 
-    public IActionResult Delete()
+    public IActionResult Update([FromForm] int id, [FromForm] string ram, [FromForm] string processor)
     {
-        return View();
+         Computer computer = _context.Computers.Find(id);
+
+        if(computer != null)
+        {
+            computer.Ram = ram;
+            computer.Processor = processor;
+            _context.Computers.Update(computer);
+            _context.SaveChanges();
+        }
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult Atualizacao(int id)
+    {
+        Computer computer = _context.Computers.Find(id);
+
+        if(computer == null)
+        {
+            return NotFound();
+        }
+
+        return View(computer);
+    }
+
+    public IActionResult Delete(int id)
+    {
+        _context.Computers.Remove(_context.Computers.Find(id));
+        _context.SaveChanges();
+        return RedirectToAction("Index");
     }
 
 }
